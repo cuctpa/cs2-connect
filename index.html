@@ -311,7 +311,7 @@
     document.getElementById('page').style.display       = 'none';
     document.getElementById('error-page').style.display = 'flex';
   } else {
-    const isLucky  = Math.random() < 0.01;  // 1% шанс кота
+    const isLucky  = Math.random() < 0.15;  // 15% шанс кота
     const gifUrl   = isLucky ? CAT_GIF : NORMAL_GIF;
     const steamUrl = `steam://run/730//+connect ${ip}`;
 
