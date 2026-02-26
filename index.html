@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>CS2 — Подключение к серверу</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f0f1a;
+      color: #eee;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #f0a500;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      color: #888;
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .card {
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: #f0a500;
+      transform: translateY(-3px);
+    }
+
+    .card .num {
+      font-size: 22px;
+      font-weight: bold;
+      color: #f0a500;
+      margin-bottom: 8px;
+    }
+
+    .card .ip {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+
+    .card a {
+      display: inline-block;
+      background: #f0a500;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .card a:hover {
+      background: #ffc200;
+    }
+
+    /* Страница редиректа */
+    .redirect-page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 80vh;
+      text-align: center;
+    }
+
+    .redirect-page h2 {
+      font-size: 24px;
+      color: #f0a500;
+      margin-bottom: 16px;
+    }
+
+    .redirect-page p {
+      color: #aaa;
+      margin-bottom: 24px;
+    }
+
+    .redirect-page a {
+      color: #4fc3f7;
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #2a2a4a;
+      border-top-color: #f0a500;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 24px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Главная страница со списком серверов -->
+  <div id="main">
+    <h1>🎮 CS2 — Серверы</h1>
+    <p class="subtitle">Нажми на сервер чтобы подключиться</p>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- Страница редиректа при переходе по ссылке от бота -->
+  <div class="redirect-page" id="redirect">
+    <div class="spinner"></div>
+    <h2>Подключение к серверу...</h2>
+    <p id="redirect-ip"></p>
+    <a id="redirect-manual" href="#">Нажми сюда если Steam не открылся</a>
+  </div>
+
+  <script>
+    const SERVERS = [
+      { num: 1,  ip: "85.119.149.233:27015" },
+      { num: 2,  ip: "85.119.149.233:27115" },
+      { num: 3,  ip: "85.119.149.215:27115" },
+      { num: 4,  ip: "85.119.149.215:27315" },
+      { num: 5,  ip: "95.213.255.84:27015"  },
+      { num: 6,  ip: "95.213.255.100:27015" },
+      { num: 7,  ip: "95.213.255.131:27015" },
+      { num: 8,  ip: "45.95.31.72:27215"    },
+      { num: 9,  ip: "95.213.255.178:27315" },
+      { num: 10, ip: "95.213.255.157:27415" },
+      { num: 11, ip: "95.213.255.198:27015" },
+      { num: 12, ip: "45.95.31.63:27015"    },
+      { num: 13, ip: "45.95.31.10:27015"    },
+      { num: 14, ip: "45.95.31.20:27415"    },
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+    const ipParam = params.get('ip');
+
+    if (ipParam) {
+      // Режим редиректа — пришли по ссылке от бота
+      document.getElementById('main').style.display = 'none';
+      document.getElementById('redirect').style.display = 'flex';
+
+      const steamUrl = `steam://run/730//+connect ${ipParam}`;
+      document.getElementById('redirect-ip').textContent = ipParam;
+      document.getElementById('redirect-manual').href = steamUrl;
+
+      window.location.href = steamUrl;
+
+    } else {
+      // Главная страница — рендерим карточки серверов
+      const grid = document.getElementById('grid');
+      SERVERS.forEach(srv => {
+        const steamUrl = `steam://run/730//+connect ${srv.ip}`;
+        grid.innerHTML += `
+          <div class="card">
+            <div class="num">#${srv.num}</div>
+            <div class="ip">${srv.ip}</div>
+            <a href="${steamUrl}">🎮 Подключиться</a>
+          </div>
+        `;
+      });
+    }
+  </script>
+
+</body>
+</html>
